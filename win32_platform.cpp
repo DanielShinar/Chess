@@ -1,12 +1,5 @@
 #include "utility.cpp"
-#include <Windows.h>
-#include <windowsx.h>
-#include <wingdi.h>
-#include <cctype>
-#include <cstring>
-
-
-#include <string>
+#include "gameHandler.h"
 
 #include <gdiplus.h>
 
@@ -17,8 +10,8 @@ using namespace Gdiplus;
 #define size 8
 #define dst 80
 #define src 30
+#define playerBlack false
 
-POINT pt;
 struct Squere
 {
 	int x, y;
@@ -31,16 +24,19 @@ struct RenderState
 	BITMAPINFO BitMapInfo;
 
 };
+POINT pt;
 
 globalVariable bool check = false;
 globalVariable bool newTurn = true;
 globalVariable bool running = true;
-globalVariable RenderState renderState;
-globalVariable Squere preSquere;
-globalVariable Squere squere;
+RenderState renderState;
+Squere preSquere;
+Squere squere;
 globalVariable HDC pub;
 globalVariable HBITMAP hBitmap;
-globalVariable char chessBoard[size][size] = {
+globalVariable gameHandler gh;
+
+char chessBoard[size][size] = {
 	{'r','o','b','q','k','b','o','r'},
 	{'p','p','p','p','p','p','p','p'},
 	{'#','#','#','#','#','#','#','#'},
@@ -50,6 +46,15 @@ globalVariable char chessBoard[size][size] = {
 	{'P','P','P','P','P','P','P','P'},
 	{'R','O','B','Q','K','B','O','R'} }; //upper case is white lower case is black
 
+globalVariable char chessBoardBlack[size][size] = {
+	{'R','O','B','K','Q','B','O','R'},
+	{'P','P','P','P','P','P','P','P'},
+	{'#','#','#','#','#','#','#','#'},
+	{'#','#','#','#','#','#','#','#'},
+	{'#','#','#','#','#','#','#','#'},
+	{'#','#','#','#','#','#','#','#'},
+	{'p','p','p','p','p','p','p','p'},
+	{'r','o','b','k','q','b','o','r'} };
 
 void drawPieces();
 void drawPiecesDiff();
@@ -70,6 +75,10 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		{
 			running = false;
 		} break;
+		case WM_ERASEBKGND:
+		{
+			return true;
+		}
 		case WM_SIZE:
 		{
 			RECT rect;
@@ -109,17 +118,27 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 					}
 					else
 					{
-						pieceHolder = chessBoard[preSquere.y][preSquere.x];
-						chessBoard[preSquere.y][preSquere.x] = '#';
-						chessBoard[squere.y][squere.x] = pieceHolder;
-						newTurn = true;
+						if (gh.canMove(chessBoard ,chessBoard[preSquere.y][preSquere.x], preSquere.x, preSquere.y, squere.x, squere.y))
+						{
+							pieceHolder = chessBoard[preSquere.y][preSquere.x];
+							chessBoard[preSquere.y][preSquere.x] = '#';
+							chessBoard[squere.y][squere.x] = pieceHolder;
+							newTurn = true;
 
+							clear_screen();
+							if ((preSquere.y + preSquere.x) % 2 == 0)
+								StretchDIBits(pub, preSquere.x * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 106, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+							else
+								StretchDIBits(pub, preSquere.x * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 1, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+							drawPiecesDiff();
+						}
+						else
+						{
+							newTurn = true;
+						}
 					}
-					clear_screen(0xffffcc, 0x00bb00);
 				}
 			}
-			StretchDIBits(pub, 0, 0, renderState.Width, renderState.Height, 0, 0, renderState.Width, renderState.Height, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
-			drawPiecesDiff();
 		} break;
 		default:
 		{
@@ -132,6 +151,17 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	if (playerBlack)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			for (int x = 0; x < size; x++)
+			{
+				chessBoard[y][x] = chessBoardBlack[y][x];
+			}
+		}
+	}
+
 	//create a window class
 	WNDCLASS windowClass = {};
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -148,7 +178,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	HDC hdc = GetDC(window);
 	pub = hdc;
 
-	clear_screen(0xffffcc, 0x00bb00);
+	clear_screen();
 
 	StretchDIBits(hdc, 0, 0, renderState.Width, renderState.Height, 0, 0, renderState.Width, renderState.Height, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
 	drawPiecesDiff();
@@ -174,6 +204,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		//StretchDIBits(hdc, 0, 0, renderState.Width, renderState.Height, 0, 0, renderState.Width, renderState.Height, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
 
 	}
+	VirtualFree(renderState.Memory, 0, MEM_RELEASE);
 }
 void drawPieces()
 {

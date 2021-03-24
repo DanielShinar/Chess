@@ -1,5 +1,17 @@
-internal void clear_screen(u32 colorA, u32 colorB)
+#include "utility.cpp"
+
+inline int
+clamp(int min, int val, int max)
 {
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
+}
+
+internal void clear_screen()
+{
+	u32 colorA = 0xffffcc;
+	u32 colorB = 0x00bb00;
 	u32 color = colorB;
 	u32 colorTwo = colorB;
 	u32* pixel = (u32*)renderState.Memory;

@@ -7,8 +7,19 @@ Queen::Queen(int y, int x, char t)
     this->type = t;
 }
 
-bool Queen::movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y)
+int Queen::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
 {
+    for (int y = 0; y < 8; y++)
+    {
+        for (int x = 0; x < 8; x++)
+        {
+            if (board[y][x]->getEn() && (board[y][x]->getType() == 'p') || board[y][x]->getType() == 'P')
+            {
+                board[y][x]->setEn(false);
+            }
+        }
+    }
+
     int i;
     if (src_x == dst_x) 
     {
@@ -17,15 +28,15 @@ bool Queen::movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y)
         {
             // Move right
             for (i = src_y + 1; i < dst_y; ++i)
-                if (board[i][src_x] != '#')
-                    return false;
+                if (board[i][src_x]->getType() != '#')
+                    return illegal;
         }
         else 
         {
             // Move left
             for (i = src_y - 1; i > dst_y; --i)
-                if (board[i][src_x] != '#')
-                    return false;
+                if (board[i][src_x]->getType() != '#')
+                    return illegal;
         }
     }
     else if (src_y == dst_y) 
@@ -35,15 +46,15 @@ bool Queen::movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y)
         {
             // Move down
             for (i = src_x + 1; i < dst_x; ++i)
-                if (board[src_y][i] != '#')
-                    return false;
+                if (board[src_y][i]->getType() != '#')
+                    return illegal;
         }
         else 
         {
             // Move up
             for (i = src_x - 1; i > dst_x; --i)
-                if (board[src_y][i] != '#')
-                    return false;
+                if (board[src_y][i]->getType() != '#')
+                    return illegal;
         }
     }
     //bishop movment
@@ -52,14 +63,14 @@ bool Queen::movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y)
         if (src_x + src_y > dst_x + dst_y) //top left
         {
             for (i = 1; i < src_x - dst_x; i++)
-                if(board[src_y - i][src_x - i] != '#')
-                    return false;
+                if(board[src_y - i][src_x - i]->getType() != '#')
+                    return illegal;
         }
         else // butt right
         {
             for (i = 1; i < dst_x - src_x; i++)
-                if(board[src_y+i][src_x+i] != '#')
-                    return false;
+                if(board[src_y+i][src_x+i]->getType() != '#')
+                    return illegal;
         }
     }
     else if (dst_x - src_x == src_y - dst_y) // top right - butt left
@@ -67,21 +78,47 @@ bool Queen::movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y)
         if (src_x > dst_x && src_y < dst_y) //butt left
         {
             for(i = 1; i < src_x - dst_x ;i++)
-                if(board[src_y+i][src_x-i] != '#')
-                    return false;
+                if(board[src_y+i][src_x-i]->getType() != '#')
+                    return illegal;
         }
         else
         {
             for (i = 1; i < dst_x - src_x; i++)
-                if (board[src_y - i][src_x + i] != '#')
-                    return false;//top right
+                if (board[src_y - i][src_x + i]->getType() != '#')
+                    return illegal;//top right
         }
     } 
     else    
     {
         // Not a valid queen move
-        return false;
+        return illegal;
     }
-	return true;
+	return legal;
 
+}
+
+void Queen::setType(char t)
+{
+    this->type = t;
+}
+
+void Queen::setLocation(int y, int x)
+{
+    this->location.y = y;
+    this->location.x = x;
+}
+
+int Queen::getLocationY()
+{
+    return this->location.y;
+}
+
+int Queen::getLocationX()
+{
+    return this->location.x;
+}
+
+char Queen::getType()
+{
+    return this->type;
 }

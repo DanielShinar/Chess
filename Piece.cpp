@@ -1,8 +1,8 @@
 #include "Piece.h"
 
-bool Piece::movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y)
+int Piece::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
 {
-	return false;
+	return 0;
 }
 void Piece::setLocation(int y, int x)
 {
@@ -14,6 +14,10 @@ void Piece::setMoved(bool hasMoved)
 }
 void Piece::setEn(bool canEn)
 {
+}
+void Piece::setType(char t)
+{
+	this->type = t;
 }
 char Piece::getType()
 {

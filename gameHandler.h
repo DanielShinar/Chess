@@ -12,7 +12,7 @@
 class gameHandler
 {
 public:
-	bool canMove(char chessboard[8][8], char piece ,int src_x, int src_y, int dst_x, int dst_y);
+	bool canMove(Piece* chessboard[8][8], char piece ,int src_x, int src_y, int dst_x, int dst_y);
 
 private:
 	King king = King(0,0,'k');

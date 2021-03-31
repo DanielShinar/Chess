@@ -33,3 +33,7 @@ struct RenderState
 	BITMAPINFO BitMapInfo;
 
 };
+enum legalMoves
+{
+	illegal = 0, legal = 1, en = 2, castle = 3
+};

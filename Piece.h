@@ -3,17 +3,18 @@
 class Piece
 {
 public:
-	virtual bool movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y);
+	virtual int movment(Piece *board[][8], int src_x, int src_y, int dst_x, int dst_y);
 	//setters
-	void setLocation(int y, int x);
-	void setMoved(bool hasMoved = true);
-	void setEn(bool canEn);
+	virtual void setLocation(int y, int x);
+	virtual void setMoved(bool hasMoved = true);
+	virtual void setEn(bool canEn);
+	virtual void setType(char t);
 	//getters
-	int getLocationY();
-	int getLocationX();
-	char getType();
-	bool getMoved();
-	bool getEn();
+	virtual int getLocationY();
+	virtual int getLocationX();
+	virtual char getType();
+	virtual bool getMoved();
+	virtual bool getEn();
 
 private:
 	Squere location;

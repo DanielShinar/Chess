@@ -4,11 +4,16 @@ class Rook : public Piece
 {
 public:
 	Rook(int y, int x, char t);
-	bool movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y);
+	int movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y) override;
 
 	//setters
+	void setType(char t);
+	void setLocation(int y, int x);
 	void setMoved(bool hasMoved = true);
 	//getters
+	int getLocationY();
+	int getLocationX();
+	char getType();
 	bool getMoved();
 
 private:

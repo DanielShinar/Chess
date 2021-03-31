@@ -27,41 +27,40 @@ globalVariable HDC pub;
 globalVariable HBITMAP hBitmap;
 globalVariable gameHandler gh;
 
-char chessBoard[size][size] = {
-	{'r','o','b','q','k','b','o','r'},
-	{'p','p','p','p','p','p','p','p'},
-	{'#','#','#','#','#','#','#','#'},
-	{'#','#','#','#','#','#','#','#'},
-	{'#','#','#','#','#','#','#','#'},
-	{'#','#','#','#','#','#','#','#'},
-	{'P','P','P','P','P','P','P','P'},
-	{'R','O','B','Q','K','B','O','R'} }; //upper case is white lower case is black
+//char chessBoard[size][size] = {
+//	{'r','o','b','q','k','b','o','r'},
+//	{'p','p','p','p','p','p','p','p'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'P','P','P','P','P','P','P','P'},
+//	{'R','O','B','Q','K','B','O','R'} }; //upper case is white lower case is black
+//
+//globalVariable char chessBoardBlack[size][size] = {
+//	{'R','O','B','K','Q','B','O','R'},
+//	{'P','P','P','P','P','P','P','P'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'#','#','#','#','#','#','#','#'},
+//	{'p','p','p','p','p','p','p','p'},
+//	{'r','o','b','k','q','b','o','r'} };
 
-globalVariable char chessBoardBlack[size][size] = {
-	{'R','O','B','K','Q','B','O','R'},
-	{'P','P','P','P','P','P','P','P'},
-	{'#','#','#','#','#','#','#','#'},
-	{'#','#','#','#','#','#','#','#'},
-	{'#','#','#','#','#','#','#','#'},
-	{'#','#','#','#','#','#','#','#'},
-	{'p','p','p','p','p','p','p','p'},
-	{'r','o','b','k','q','b','o','r'} };
-
-//Piece* board[size][size] = {
-//	{new Rook(0,0,'r'),new Knight(0,1,'o'),new Bishop(0,2,'b'),new King(0,3,'k'),new Queen(0,4,'q'),new Bishop(0,5,'b'),new Knight(0,6,'o'),new Rook(0,7,'r')},
-//	{new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p')},
-//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
-//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
-//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
-//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
-//	{new Pawn(6,0,'P'),new Pawn(6,1,'P'),new Pawn(6,2,'P'),new Pawn(6,3,'P'),new Pawn(6,4,'P'),new Pawn(6,5,'P'),new Pawn(6,6,'P'),new Pawn(6,7,'P')},
-//	{new Rook(7,0,'R'),new Knight(7,1,'O'),new Bishop(7,2,'B'),new King(7,3,'K'),new Queen(7,4,'Q'),new Bishop(7,5,'B'),new Knight(7,6,'O'),new Rook(7,7,'R')} };
+Piece* chessBoard[size][size] = {
+	{new Rook(0,0,'r'),new Knight(0,1,'o'),new Bishop(0,2,'b'),new Queen(0,3,'q'),new King(0,4,'k'),new Bishop(0,5,'b'),new Knight(0,6,'o'),new Rook(0,7,'r')},
+	{new Pawn(1,0,'p'),new Pawn(1,1,'p'),new Pawn(1,2,'p'),new Pawn(1,3,'p'),new Pawn(1,4,'p'),new Pawn(1,5,'p'),new Pawn(1,6,'p'),new Pawn(1,7,'p')},
+	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+	{new Pawn(6,0,'P'),new Pawn(6,1,'P'),new Pawn(6,2,'P'),new Pawn(6,3,'P'),new Pawn(6,4,'P'),new Pawn(6,5,'P'),new Pawn(6,6,'P'),new Pawn(6,7,'P')},
+	{new Rook(7,0,'R'),new Knight(7,1,'O'),new Bishop(7,2,'B'),new Queen(7,3,'Q'),new King(7,4,'K'),new Bishop(7,5,'B'),new Knight(7,6,'O'),new Rook(7,7,'R')} };
 
 
-void drawPieces();
 void drawPiecesDiff();
 void DrawBitmap(LPCSTR piecePath, int x, int y, HDC dc);
-char pawnChange(char piece, int y);
+Piece* pawnChange(Piece* piece, int y);
 
 #include "renderer.cpp"
 
@@ -104,14 +103,15 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		case WM_LBUTTONDOWN:
 		{
-			char pieceHolder;
+			Piece* pieceHolder;
+			int move = illegal;
 			if (check)
 			{
 				pt.x = GET_X_LPARAM(lParam);
 				pt.y = GET_Y_LPARAM(lParam);
 				squere.x = pt.x / (renderState.Width / 8);
 				squere.y = pt.y / (renderState.Height / 8);
-				if (((isupper(chessBoard[squere.y][squere.x]) && whitesTurn && newTurn) || (islower(chessBoard[squere.y][squere.x]) && !whitesTurn && newTurn) || !newTurn))//checks if the player picks a piece to play
+				if (((isupper(chessBoard[squere.y][squere.x]->getType()) && whitesTurn && newTurn) || (islower(chessBoard[squere.y][squere.x]->getType()) && !whitesTurn && newTurn) || !newTurn))//checks if the player picks a piece to play
 				{
 					if (newTurn)
 					{
@@ -121,19 +121,79 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 					}
 					else
 					{
-						if (gh.canMove(chessBoard ,chessBoard[preSquere.y][preSquere.x], preSquere.x, preSquere.y, squere.x, squere.y))
+						move = chessBoard[preSquere.y][preSquere.x]->movment(chessBoard, preSquere.x, preSquere.y, squere.x, squere.y);
+						if ((move > 0 && (isupper(chessBoard[preSquere.y][preSquere.x]->getType()) != isupper(chessBoard[squere.y][squere.x]->getType()) || islower(chessBoard[preSquere.y][preSquere.x]->getType()) != islower(chessBoard[squere.y][squere.x]->getType()))) || move == castle)
 						{
-							pieceHolder = chessBoard[preSquere.y][preSquere.x];
-							chessBoard[preSquere.y][preSquere.x] = '#';
-							pieceHolder = pawnChange(pieceHolder, squere.y);
-							chessBoard[squere.y][squere.x] = pieceHolder;
+							if (move == castle)
+							{
+								if (squere.x < preSquere.x)
+								{
+									delete chessBoard[preSquere.y][preSquere.x - 2];
+									chessBoard[preSquere.y][preSquere.x - 2] = chessBoard[preSquere.y][preSquere.x];
+									chessBoard[preSquere.y][preSquere.x] = new Piece();
+
+									delete chessBoard[preSquere.y][preSquere.x - 1];
+									chessBoard[preSquere.y][preSquere.x - 1] = chessBoard[squere.y][squere.x];
+									chessBoard[squere.y][squere.x] = new Piece();
+								}
+								else
+								{
+									delete chessBoard[preSquere.y][preSquere.x + 2];
+									chessBoard[preSquere.y][preSquere.x + 2] = chessBoard[preSquere.y][preSquere.x];
+									chessBoard[preSquere.y][preSquere.x] = new Piece();
+
+									delete chessBoard[preSquere.y][preSquere.x + 1];
+									chessBoard[preSquere.y][preSquere.x + 1] = chessBoard[squere.y][squere.x];
+									chessBoard[squere.y][squere.x] = new Piece();
+								}
+							}
+							else
+							{
+								pieceHolder = chessBoard[preSquere.y][preSquere.x];
+								pieceHolder->setLocation(squere.y, squere.x);
+
+								delete chessBoard[squere.y][squere.x];
+
+								chessBoard[preSquere.y][preSquere.x] = new Piece();
+								pieceHolder = pawnChange(pieceHolder, squere.y);
+								chessBoard[squere.y][squere.x] = pieceHolder;
+							}
 							newTurn = true;
 
 							clear_screen();
+							//StretchDIBits(pub, 0, 0 , renderState.Width, renderState.Height, 0, 0, renderState.Width, renderState.Height, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);//if flickers use the if and else stuff
 							if ((preSquere.y + preSquere.x) % 2 == 0)
+							{
 								StretchDIBits(pub, preSquere.x * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 106, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+								if (move == en)
+								{
+									StretchDIBits(pub, (preSquere.x - 1) * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 1, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+									StretchDIBits(pub, (preSquere.x + 1) * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 1, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+								}
+								else if (move == castle)
+								{
+									if (squere.x < preSquere.x)
+										StretchDIBits(pub, squere.x * renderState.Width / 8, squere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 106, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+									else
+										StretchDIBits(pub, squere.x* renderState.Width / 8, squere.y* renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 1, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+								}
+							}
 							else
+							{
 								StretchDIBits(pub, preSquere.x * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 1, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+								if (move == en)
+								{
+									StretchDIBits(pub, (preSquere.x - 1) * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 106, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+									StretchDIBits(pub, (preSquere.x + 1) * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 106, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+								}
+								else if (move == castle)
+								{
+									if (squere.x < preSquere.x)
+										StretchDIBits(pub, squere.x * renderState.Width / 8, squere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 1, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+									else
+										StretchDIBits(pub, squere.x * renderState.Width / 8, squere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 106, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
+								}
+							}
 							drawPiecesDiff();
 
 							if (whitesTurn && newTurn)
@@ -166,7 +226,14 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		{
 			for (int x = 0; x < size; x++)
 			{
-				chessBoard[y][x] = chessBoardBlack[y][x];
+				if (isupper(chessBoard[y][x]->getType()))
+				{
+					chessBoard[y][x]->setType(chessBoard[y][x]->getType() + 0x20);
+				}
+				else if (islower(chessBoard[y][x]->getType()))
+				{
+					chessBoard[y][x]->setType(chessBoard[y][x]->getType() - 0x20);
+				}
 			}
 		}
 	}
@@ -214,94 +281,25 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	}
 	VirtualFree(renderState.Memory, 0, MEM_RELEASE);
-}
-void drawPieces()
-{
-	int upsideY = 7;
+
 	for (int y = 0; y < size; y++)
 	{
-		int upsideX = 7;
 		for (int x = 0; x < size; x++)
-			{
-				switch (chessBoard[y][x])
-				{
-				case 'p': //black pawn
-				{
-
-				}break;
-				case 'P': //white pawn
-				{
-
-				}break;
-				case 'o': //black knight
-				{
-
-				}break;
-				case 'O': //white knight
-				{
-
-				}break;
-				case 'b': //black bishop
-				{
-
-				}break;
-				case 'B': //white bishop
-				{
-
-				}break;
-				case 'r': //black rook
-				{
-
-				}break;
-				case 'R': //white rook
-				{
-
-				}break;
-				case 'q': //black queen
-				{
-
-				}break;
-				case 'Q': //white queen
-				{
-
-				}break;
-				case 'k': //black king
-				{
-
-				}break;
-				case 'K': //white king
-				{
-
-				}break;
-
-				deafult:
-					break;
-				}
-
-				if (chessBoard[y][x] != '#')
-				{
-					if (isupper(chessBoard[y][x]))
-					{
-						draw_rect_in_pixels(src + (renderState.Width / size * x), src + (renderState.Height / size * upsideY), dst + (renderState.Width / size * x), dst + (renderState.Height / size * upsideY), 0xf667f0);
-					}
-					else
-					{
-						draw_rect_in_pixels(src + (renderState.Width / size * x), src + (renderState.Height / size * upsideY), dst + (renderState.Width / size * x), dst + (renderState.Height / size * upsideY), 0x990099);
-					}
-				}
-				upsideX--;
-			}
-		upsideY--;
+		{
+			delete chessBoard[y][x];
+		}
 	}
 }
 
 void drawPiecesDiff()
 {
+	char type;
 	for (int y = 0; y < size; y++)
 	{
 		for (int x = 0; x < size; x++)
 		{
-			switch (chessBoard[y][x])
+			type = chessBoard[y][x]->getType();
+			switch (type)
 			{
 			case 'p': //black pawn
 			{
@@ -412,28 +410,36 @@ void DrawBitmap(LPCSTR piecePath, int x, int y, HDC dc)
 
 	BitBlt(dc, x, y, bm.bmWidth, bm.bmHeight, hdcImage, 0, 0, SRCCOPY);
 }
-char pawnChange(char piece, int y)
+Piece* pawnChange(Piece* piece, int y)
 {
 	if (playerBlack)
 	{
-		if (piece == 'p' && squere.y == 0)
+		if (piece->getType() == 'p' && y == 0)
 		{
-			piece = 'q';
+			Piece* newPiece = new Queen(0, piece->getLocationX(), 'q');
+			delete piece;
+			return newPiece;
 		}
-		else if (piece == 'P' && squere.y == 7)
+		else if (piece->getType() == 'P' && y == 7)
 		{
-			piece = 'Q';
+			Piece* newPiece = new Queen(7, piece->getLocationX(), 'Q');
+			delete piece;
+			return newPiece;
 		}
 	}
 	else
 	{
-		if (piece == 'p' && squere.y == 7)
+		if (piece->getType() == 'p' && y == 7)
 		{
-			piece = 'q';
+			Piece* newPiece = new Queen(7, piece->getLocationX(), 'q');
+			delete piece;
+			return newPiece;
 		}
-		else if (piece == 'P' && squere.y == 0)
+		else if (piece->getType() == 'P' && y == 0)
 		{
-			piece = 'Q';
+			Piece* newPiece = new Queen(0, piece->getLocationX(), 'Q');
+			delete piece;
+			return newPiece;
 		}
 	}
 	return piece;

@@ -1,8 +1,8 @@
 #include "gameHandler.h"
 
-bool gameHandler::canMove(char chessboard[8][8], char piece, int src_x, int src_y, int dst_x, int dst_y)
+bool gameHandler::canMove(Piece* chessboard[8][8], char piece, int src_x, int src_y, int dst_x, int dst_y)
 {
-    if (((chessboard[dst_y][dst_x] == '#') || islower(chessboard[src_y][src_x]) && isupper(chessboard[dst_y][dst_x]) || isupper(chessboard[src_y][src_x]) && islower(chessboard[dst_y][dst_x])))
+    if (((chessboard[dst_y][dst_x]->getType() == '#') || islower(chessboard[src_y][src_x]->getType()) && isupper(chessboard[dst_y][dst_x]->getType()) || isupper(chessboard[src_y][src_x]->getType()) && islower(chessboard[dst_y][dst_x]->getType())))
     {
         if (piece == 'k' || piece == 'K')
             return this->king.movment(chessboard, src_x, src_y, dst_x, dst_y);

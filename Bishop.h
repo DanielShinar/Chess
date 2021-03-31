@@ -1,14 +1,15 @@
 #pragma once
 #include "Piece.h"
-class Knight : public Piece
+
+class Bishop : public Piece
 {
 public:
-	Knight(int y, int x, char t);
+	Bishop(int y, int x, char t);
 	bool movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y);
 
 private:
-	char type;
 	int worth = 3;
 	Squere location;
+	char type;
 };
 

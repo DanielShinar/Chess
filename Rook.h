@@ -1,10 +1,9 @@
 #pragma once
 #include "Piece.h"
-
-class King : public Piece
+class Rook : public Piece
 {
 public:
-	King(int y, int x, char t);
+	Rook(int y, int x, char t);
 	bool movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y);
 
 	//setters
@@ -14,7 +13,7 @@ public:
 
 private:
 	char type;
-	int worth = 10000;
+	int worth = 5;
 	Squere location;
 	bool moved = false;
 };

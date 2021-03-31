@@ -1,21 +1,15 @@
 #pragma once
 #include "Piece.h"
 
-class Pawn : public Piece
+class Queen : public Piece
 {
 public:
-	Pawn(int y, int x, char t);
+	Queen(int y, int x, char t);
 	bool movment(char board[][8], int src_x, int src_y, int dst_x, int dst_y);
-
-	//setters
-	void setEn(bool check);
-	//getters
-	bool getEn();
 
 private:
 	char type;
 	Squere location;
-	bool En = false;
-	int worth = 1;
+	int worth = 8;
 };
 

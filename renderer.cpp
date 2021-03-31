@@ -1,4 +1,4 @@
-#include "utility.cpp"
+#include "utility.h"
 
 inline int
 clamp(int min, int val, int max)

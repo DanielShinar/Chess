@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Windows.h>
 #include <windowsx.h>
 #include <wingdi.h>
@@ -16,3 +18,18 @@ typedef unsigned long long u64;
 
 #define globalVariable static
 #define internal static
+
+#define playerBlack false
+
+struct Squere
+{
+	int x, y;
+};
+struct RenderState
+{
+	int Height, Width;
+	void* Memory;
+
+	BITMAPINFO BitMapInfo;
+
+};

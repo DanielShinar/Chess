@@ -1,34 +1,25 @@
-#include "utility.cpp"
+#include "utility.h"
 #include "gameHandler.h"
+
+#include "Pawn.h"
+#include "Knight.h"
 
 #include <gdiplus.h>
 
 using namespace Gdiplus;
 #pragma comment (lib, "Gdiplus.lib")
 
-#define chessPath "C:\\Users\\USER\\Desktop\\chessBoardBMP.bmp"
 #define size 8
 #define dst 80
 #define src 30
-#define playerBlack false
 
-struct Squere
-{
-	int x, y;
-};
-struct RenderState
-{
-	int Height, Width;
-	void* Memory;
-
-	BITMAPINFO BitMapInfo;
-
-};
 POINT pt;
 
-globalVariable bool check = false;
-globalVariable bool newTurn = true;
-globalVariable bool running = true;
+
+bool whitesTurn = true;
+bool check = false;
+bool newTurn = true;
+bool running = true;
 RenderState renderState;
 Squere preSquere;
 Squere squere;
@@ -56,9 +47,21 @@ globalVariable char chessBoardBlack[size][size] = {
 	{'p','p','p','p','p','p','p','p'},
 	{'r','o','b','k','q','b','o','r'} };
 
+//Piece* board[size][size] = {
+//	{new Rook(0,0,'r'),new Knight(0,1,'o'),new Bishop(0,2,'b'),new King(0,3,'k'),new Queen(0,4,'q'),new Bishop(0,5,'b'),new Knight(0,6,'o'),new Rook(0,7,'r')},
+//	{new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p'),new Pawn(1,0,'p')},
+//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+//	{new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece(),new Piece()},
+//	{new Pawn(6,0,'P'),new Pawn(6,1,'P'),new Pawn(6,2,'P'),new Pawn(6,3,'P'),new Pawn(6,4,'P'),new Pawn(6,5,'P'),new Pawn(6,6,'P'),new Pawn(6,7,'P')},
+//	{new Rook(7,0,'R'),new Knight(7,1,'O'),new Bishop(7,2,'B'),new King(7,3,'K'),new Queen(7,4,'Q'),new Bishop(7,5,'B'),new Knight(7,6,'O'),new Rook(7,7,'R')} };
+
+
 void drawPieces();
 void drawPiecesDiff();
 void DrawBitmap(LPCSTR piecePath, int x, int y, HDC dc);
+char pawnChange(char piece, int y);
 
 #include "renderer.cpp"
 
@@ -108,7 +111,7 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 				pt.y = GET_Y_LPARAM(lParam);
 				squere.x = pt.x / (renderState.Width / 8);
 				squere.y = pt.y / (renderState.Height / 8);
-				if ((chessBoard[squere.y][squere.x] != '#' && newTurn) || (!newTurn))//checks if the player picks a piece to play
+				if (((isupper(chessBoard[squere.y][squere.x]) && whitesTurn && newTurn) || (islower(chessBoard[squere.y][squere.x]) && !whitesTurn && newTurn) || !newTurn))//checks if the player picks a piece to play
 				{
 					if (newTurn)
 					{
@@ -122,6 +125,7 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 						{
 							pieceHolder = chessBoard[preSquere.y][preSquere.x];
 							chessBoard[preSquere.y][preSquere.x] = '#';
+							pieceHolder = pawnChange(pieceHolder, squere.y);
 							chessBoard[squere.y][squere.x] = pieceHolder;
 							newTurn = true;
 
@@ -131,6 +135,11 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 							else
 								StretchDIBits(pub, preSquere.x * renderState.Width / 8, preSquere.y * renderState.Height / 8, renderState.Width / 8, renderState.Height / 8, 0, 1, renderState.Width / 8, renderState.Height / 8, renderState.Memory, &renderState.BitMapInfo, DIB_RGB_COLORS, SRCCOPY);
 							drawPiecesDiff();
+
+							if (whitesTurn && newTurn)
+								whitesTurn = false;
+							else if (!whitesTurn && newTurn)
+								whitesTurn = true;
 						}
 						else
 						{
@@ -402,4 +411,30 @@ void DrawBitmap(LPCSTR piecePath, int x, int y, HDC dc)
 	SelectObject(hdcImage, image);
 
 	BitBlt(dc, x, y, bm.bmWidth, bm.bmHeight, hdcImage, 0, 0, SRCCOPY);
+}
+char pawnChange(char piece, int y)
+{
+	if (playerBlack)
+	{
+		if (piece == 'p' && squere.y == 0)
+		{
+			piece = 'q';
+		}
+		else if (piece == 'P' && squere.y == 7)
+		{
+			piece = 'Q';
+		}
+	}
+	else
+	{
+		if (piece == 'p' && squere.y == 7)
+		{
+			piece = 'q';
+		}
+		else if (piece == 'P' && squere.y == 0)
+		{
+			piece = 'Q';
+		}
+	}
+	return piece;
 }

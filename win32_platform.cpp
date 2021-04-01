@@ -15,6 +15,12 @@ using namespace Gdiplus;
 
 POINT pt;
 
+Squere blackKing;
+Squere whiteKing;
+Squere tempKing;
+
+bool blackCheck = false;
+bool whiteCheck = false;
 
 bool whitesTurn = true;
 bool check = false;
@@ -61,6 +67,7 @@ Piece* chessBoard[size][size] = {
 void drawPiecesDiff();
 void DrawBitmap(LPCSTR piecePath, int x, int y, HDC dc);
 Piece* pawnChange(Piece* piece, int y);
+bool checkIfCheck(Piece* board[][size], bool whiteAttacked);
 
 #include "renderer.cpp"
 
@@ -104,6 +111,7 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		case WM_LBUTTONDOWN:
 		{
 			Piece* pieceHolder;
+			Piece* checkHolder;
 			int move = illegal;
 			if (check)
 			{
@@ -124,6 +132,18 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 						move = chessBoard[preSquere.y][preSquere.x]->movment(chessBoard, preSquere.x, preSquere.y, squere.x, squere.y);
 						if ((move > 0 && (isupper(chessBoard[preSquere.y][preSquere.x]->getType()) != isupper(chessBoard[squere.y][squere.x]->getType()) || islower(chessBoard[preSquere.y][preSquere.x]->getType()) != islower(chessBoard[squere.y][squere.x]->getType()))) || move == castle)
 						{
+							//needs to make sure move dousnt check the player
+							/*if ()
+							{
+
+							}*/
+
+
+
+							if ((chessBoard[preSquere.y][preSquere.x]->getType() == 'K' || chessBoard[preSquere.y][preSquere.x]->getType() == 'k' || chessBoard[preSquere.y][preSquere.x]->getType() == 'r' || chessBoard[preSquere.y][preSquere.x]->getType() == 'R') && !chessBoard[preSquere.y][preSquere.x]->getMoved())
+							{
+								chessBoard[preSquere.y][preSquere.x]->setMoved(true);
+							}
 							if (move == castle)
 							{
 								if (squere.x < preSquere.x)
@@ -146,9 +166,75 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 									chessBoard[preSquere.y][preSquere.x + 1] = chessBoard[squere.y][squere.x];
 									chessBoard[squere.y][squere.x] = new Piece();
 								}
+								for (int y = 0; y < size; y++)//always keeps where the kings are
+								{
+									for (int x = 0; x < size; x++)
+									{
+										if (chessBoard[y][x]->getType() == 'k')
+										{
+											blackKing.y = squere.y;
+											blackKing.x = squere.x;
+										}
+										else if (chessBoard[y][x]->getType() == 'K')
+										{
+											whiteKing.y = squere.y;
+											whiteKing.x = squere.x;
+										}
+									}
+								}
 							}
+
+
 							else
 							{
+								if (chessBoard[preSquere.y][preSquere.x]->getType() == 'K' || chessBoard[preSquere.y][preSquere.x]->getType() == 'k')//to check if king can escape
+								{
+									tempKing.y = squere.y;
+									tempKing.x = squere.x;
+								}
+								else
+								{
+									if (whitesTurn)
+									{
+										tempKing.y = whiteKing.y;
+										tempKing.x = whiteKing.x;
+									}
+									else
+									{
+										tempKing.y = blackKing.y;
+										tempKing.x = blackKing.x;
+									}
+								}
+								pieceHolder = chessBoard[preSquere.y][preSquere.x];
+								checkHolder = chessBoard[squere.y][squere.x];
+								chessBoard[preSquere.y][preSquere.x] = new Piece();
+								chessBoard[squere.y][squere.x] = pieceHolder;
+								if (checkIfCheck(chessBoard, whitesTurn))
+								{
+									delete chessBoard[preSquere.y][preSquere.x];
+									chessBoard[preSquere.y][preSquere.x] = pieceHolder;
+									chessBoard[squere.y][squere.x] = checkHolder;
+									break;
+								}
+								else
+								{
+									delete chessBoard[preSquere.y][preSquere.x];
+									chessBoard[preSquere.y][preSquere.x] = pieceHolder;
+									chessBoard[squere.y][squere.x] = checkHolder;
+								}
+
+
+
+								if (chessBoard[preSquere.y][preSquere.x]->getType() == 'k')//always keeps where the kings are
+								{
+									blackKing.y = squere.y;
+									blackKing.x = squere.x;
+								}
+								else if (chessBoard[preSquere.y][preSquere.x]->getType() == 'K')
+								{
+									whiteKing.y = squere.y;
+									whiteKing.x = squere.x;
+								}
 								pieceHolder = chessBoard[preSquere.y][preSquere.x];
 								pieceHolder->setLocation(squere.y, squere.x);
 
@@ -200,6 +286,20 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 								whitesTurn = false;
 							else if (!whitesTurn && newTurn)
 								whitesTurn = true;
+
+							if (move != pawnPush)
+							{
+								for (int y = 0; y < 8; y++)//disable pawn en passante
+								{
+									for (int x = 0; x < 8; x++)
+									{
+										if (chessBoard[y][x]->getEn() && (chessBoard[y][x]->getType() == 'p') || chessBoard[y][x]->getType() == 'P')
+										{
+											chessBoard[y][x]->setEn(false);
+										}
+									}
+								}
+							}
 						}
 						else
 						{
@@ -236,6 +336,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 				}
 			}
 		}
+		whiteKing.y = 0;
+		whiteKing.x = 4;
+		blackKing.y = 7;
+		blackKing.x = 4;
+	}
+	else
+	{
+		whiteKing.y = 7;
+		whiteKing.x = 4;
+		blackKing.y = 0;
+		blackKing.x = 4;
 	}
 
 	//create a window class
@@ -443,4 +554,35 @@ Piece* pawnChange(Piece* piece, int y)
 		}
 	}
 	return piece;
+}
+bool checkIfCheck(Piece *board[][size], bool whiteAttacked)
+{
+	int x = 0, y = 0;
+	if (whiteAttacked)
+	{
+		for (y = 0; y < size; y++)
+		{
+			for (x = 0; x < size; x++)
+			{
+				if (islower(board[y][x]->getType()) && (board[y][x]->getType() != 'k' && board[y][x]->getType() != 'K') && board[y][x]->movment(board, x, y, tempKing.x, tempKing.y))
+				{
+					return true;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (y = 0; y < size; y++)
+		{
+			for (x = 0; x < size; x++)
+			{
+				if (isupper(board[y][x]->getType()) && (board[y][x]->getType() != 'k' && board[y][x]->getType() != 'K') && board[y][x]->movment(board, x, y, tempKing.x, tempKing.y))
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }

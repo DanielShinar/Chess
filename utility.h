@@ -21,6 +21,8 @@ typedef unsigned long long u64;
 
 #define playerBlack false
 
+#define BoardSize 8
+
 struct Squere
 {
 	int x, y;

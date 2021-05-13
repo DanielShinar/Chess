@@ -13,12 +13,15 @@ int King::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
     {
         return legal;
     }
-    bool checkIfthisMoved = this->getMoved();
-    bool checkIfthatMoved = board[dst_y][dst_x]->getMoved();
-    int check = board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x, src_y);
-    if (!this->getMoved() && !board[dst_y][dst_x]->getMoved() && board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x, src_y) == legal)
+    if (board[dst_y][dst_x]->getType() == 'O' || board[dst_y][dst_x]->getType() == 'o')
     {
-        return castle;
+        bool checkIfthisMoved = this->getMoved();
+        bool checkIfthatMoved = board[dst_y][dst_x]->getMoved();
+        int check = board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x, src_y);
+        if (!this->getMoved() && !board[dst_y][dst_x]->getMoved() && board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x, src_y) == legal)
+        {
+            return castle;
+        }
     }
     return illegal;
 }

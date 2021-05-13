@@ -37,7 +37,33 @@ internal void clear_screen()
 		}
 		color = colorTwo;
 	}
+}
 
+internal void announceWinner(int who_won)
+{
+	u32 colorA = 0xffffcc;
+	u32 colorB = 0x00bb00;
+	u32* pixel = (u32*)renderState.Memory;
+	if (who_won == 1)
+	{
+		for (int y = 0; y < renderState.Height; y++)
+		{
+			for (int x = 0; x < renderState.Width; x++)
+			{
+				*pixel++ = colorA;
+			}
+		}
+	}
+	else if(who_won == 2)
+	{
+		for (int y = 0; y < renderState.Height; y++)
+		{
+			for (int x = 0; x < renderState.Width; x++)
+			{
+				*pixel++ = colorB;
+			}
+		}
+	}
 }
 
 internal void draw_rect_in_pixels(int x0, int y0, int x1, int y1, u32 color)

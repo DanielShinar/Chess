@@ -10,6 +10,10 @@ Queen::Queen(int y, int x, char t)
 int Queen::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
 {
     int i;
+    if (isupper(this->getType()) && isupper(board[dst_y][dst_x]->getType()) || islower(this->getType()) && islower(board[dst_y][dst_x]->getType()))
+    {
+        return illegal;
+    }
     if (src_x == dst_x) 
     {
         // Horizontal move
@@ -110,4 +114,9 @@ int Queen::getLocationX()
 char Queen::getType()
 {
     return this->type;
+}
+
+int Queen::getWorth()
+{
+    return this->worth;
 }

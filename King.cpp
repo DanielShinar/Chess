@@ -9,19 +9,32 @@ King::King(int y, int x, char t)
 
 int King::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
 {
-    if ((dst_x == src_x + 1 || dst_x == src_x - 1 || dst_x == src_x) && (dst_y == src_y + 1 || dst_y == src_y - 1 || dst_y == src_y))
+    if (board[dst_y][dst_x]->getType() == 'R' && isupper(this->getType()) || board[dst_y][dst_x]->getType() == 'r' && islower(this->getType()))
     {
-        return legal;
-    }
-    if (board[dst_y][dst_x]->getType() == 'O' || board[dst_y][dst_x]->getType() == 'o')
-    {
+        int check;
         bool checkIfthisMoved = this->getMoved();
         bool checkIfthatMoved = board[dst_y][dst_x]->getMoved();
-        int check = board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x, src_y);
-        if (!this->getMoved() && !board[dst_y][dst_x]->getMoved() && board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x, src_y) == legal)
+        if (dst_x > src_x)
+        {
+            check = board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x + 1, src_y);
+        }
+        else
+        {
+            check = board[dst_y][dst_x]->movment(board, dst_x, dst_y, src_x - 1, src_y);
+        }
+
+        if (!checkIfthisMoved && !checkIfthatMoved && check == legal)
         {
             return castle;
         }
+    }
+    if ((isupper(this->getType()) && isupper(board[dst_y][dst_x]->getType())) || (islower(this->getType()) && islower(board[dst_y][dst_x]->getType())))
+    {
+        return illegal;
+    }
+    if (((dst_x == src_x + 1 || dst_x == src_x - 1 || dst_x == src_x) && (dst_y == src_y + 1 || dst_y == src_y - 1 || dst_y == src_y)))
+    {
+        return legal;
     }
     return illegal;
 }
@@ -60,4 +73,9 @@ int King::getLocationX()
 char King::getType()
 {
     return this->type;
+}
+
+int King::getWorth()
+{
+    return this->worth;
 }

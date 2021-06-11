@@ -10,36 +10,11 @@ Pawn::Pawn(int y, int x, char t)
 int Pawn::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
 {
     bool black = islower(board[src_y][src_x]->getType());
-    for (int y = 0; y < 8; y++)
-    {
-        for (int x = 0; x < 8; x++)
-        {
-            if(black && board[y][x]->getType() == 'p' && board[y][x]->getEn())
-            {
-                board[y][x]->setEn(false);
-            }
-            else if (!black && board[y][x]->getType() == 'P' && board[y][x]->getEn())
-            {
-                board[y][x]->setEn(false);
-            }
-        }
-    }
-
 
     if (!playerBlack)
     {
         if ((!black && src_y == 3 && (dst_x == src_x + 1 || dst_x == src_x - 1) && dst_y == src_y - 1 && board[dst_y + 1][dst_x]->getEn()) || (black && src_y == 4 && (dst_x == src_x + 1 || dst_x == src_x - 1) && dst_y == src_y + 1 && board[dst_y - 1][dst_x]->getEn()))
         {
-            if (!black)
-            {
-                delete board[dst_y + 1][dst_x];
-                board[dst_y + 1][dst_x] = new Piece();
-            }
-            else
-            {
-                delete board[dst_y - 1][dst_x];
-                board[dst_y - 1][dst_x] = new Piece();
-            }
             return en;
         }
         if ((black && src_y + 1 == dst_y || (!black && src_y - 1 == dst_y)) && board[dst_y][dst_x]->getType() == '#' && src_x == dst_x)
@@ -60,16 +35,6 @@ int Pawn::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
     {
         if ((black && src_y == 3 && (dst_x == src_x + 1 || dst_x == src_x - 1) && dst_y == src_y - 1 && board[dst_y + 1][dst_x]->getEn()) || (!black && src_y == 4 && (dst_x == src_x + 1 || dst_x == src_x - 1) && dst_y == src_y + 1 && board[dst_y - 1][dst_x]->getEn()))
         {
-            if (black)
-            {
-                delete board[dst_y + 1][dst_x];
-                board[dst_y + 1][dst_x] = new Piece();
-            }
-            else
-            {
-                delete board[dst_y - 1][dst_x];
-                board[dst_y - 1][dst_x] = new Piece();
-            }
             return en;
         }
         if ((black && src_y - 1 == dst_y || (!black && src_y + 1 == dst_y)) && board[dst_y][dst_x]->getType() == '#' && src_x == dst_x)
@@ -123,4 +88,9 @@ int Pawn::getLocationX()
 char Pawn::getType()
 {
     return this->type;
+}
+
+int Pawn::getWorth()
+{
+    return this->worth;
 }

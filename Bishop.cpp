@@ -10,6 +10,10 @@ Bishop::Bishop(int y, int x, char t)
 int Bishop::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
 {
     int i;
+    if (isupper(this->getType()) && isupper(board[dst_y][dst_x]->getType()) || islower(this->getType()) && islower(board[dst_y][dst_x]->getType()))
+    {
+        return illegal;
+    }
     if (dst_x - src_x == dst_y - src_y)// butt right - top left
     {
         if (src_x + src_y > dst_x + dst_y) //top left
@@ -74,4 +78,9 @@ int Bishop::getLocationX()
 char Bishop::getType()
 {
     return this->type;
+}
+
+int Bishop::getWorth()
+{
+    return this->worth;
 }

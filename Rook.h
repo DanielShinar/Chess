@@ -15,10 +15,11 @@ public:
 	int getLocationX();
 	char getType();
 	bool getMoved();
+	int getWorth();
 
 private:
 	char type;
-	int worth = 5;
+	int worth = 50;
 	Squere location;
 	bool moved = false;
 };

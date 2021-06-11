@@ -34,6 +34,11 @@ bool Piece::getEn()
 	return false;
 }
 
+int Piece::getWorth()
+{
+	return this->worth;
+}
+
 int Piece::getLocationY()
 {
 	return this->location.y;

@@ -10,6 +10,10 @@ Rook::Rook(int y, int x, char t)
 int Rook::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
 {
     int i;
+    if (isupper(this->getType()) && isupper(board[dst_y][dst_x]->getType()) || islower(this->getType()) && islower(board[dst_y][dst_x]->getType()))
+    {
+        return illegal;
+    }
     if (src_x == dst_x)
     {
         // Horizontal move
@@ -87,4 +91,9 @@ char Rook::getType()
 bool Rook::getMoved()
 {
     return this->moved;
+}
+
+int Rook::getWorth()
+{
+    return this->worth;
 }

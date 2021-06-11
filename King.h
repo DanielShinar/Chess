@@ -16,10 +16,11 @@ public:
 	int getLocationY();
 	int getLocationX();
 	char getType();
+	int getWorth();
 
 private:
 	char type;
-	int worth = 10000;
+	int worth = 100000000;
 	Squere location;
 	bool moved = false;
 };

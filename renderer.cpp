@@ -8,7 +8,7 @@ clamp(int min, int val, int max)
 	return val;
 }
 
-internal void clear_screen()
+internal void clear_screen(RenderState renderState)
 {
 	u32 colorA = 0xffffcc;
 	u32 colorB = 0x00bb00;
@@ -39,7 +39,7 @@ internal void clear_screen()
 	}
 }
 
-internal void announceWinner(int who_won)
+internal void announceWinner(int who_won, RenderState renderState)
 {
 	u32 colorA = 0xffffcc;
 	u32 colorB = 0x00bb00;
@@ -66,7 +66,7 @@ internal void announceWinner(int who_won)
 	}
 }
 
-internal void draw_rect_in_pixels(int x0, int y0, int x1, int y1, u32 color)
+internal void draw_rect_in_pixels(int x0, int y0, int x1, int y1, u32 color, RenderState renderState)
 {
 	x0 = clamp(0, x0, renderState.Width);
 	x1 = clamp(0, x1, renderState.Width);
@@ -89,7 +89,7 @@ internal void draw_rect_in_pixels(int x0, int y0, int x1, int y1, u32 color)
 
 globalVariable float renderScale = 0.01f;
 
-internal void draw_rect(float x, float y, float half_size_x, float half_size_y, u32 color)
+internal void draw_rect(float x, float y, float half_size_x, float half_size_y, u32 color, RenderState renderState)
 {
 	x *= renderState.Width * renderScale;
 	y *= renderState.Width * renderScale;
@@ -104,5 +104,5 @@ internal void draw_rect(float x, float y, float half_size_x, float half_size_y, 
 	int y0 = y - half_size_y;
 	int y1 = y + half_size_y;
 
-	draw_rect_in_pixels(x0, y0, x1, y1, color);
+	draw_rect_in_pixels(x0, y0, x1, y1, color, renderState);
 }

@@ -14,9 +14,10 @@ public:
 	int getLocationY();
 	int getLocationX();
 	char getType();
+	int getWorth();
 
 private:
-	int worth = 3;
+	int worth = 30;
 	Squere location;
 	char type;
 };

@@ -23,7 +23,6 @@ int Pawn::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
         }
         if (((black && src_y == 1 && src_y + 2 == dst_y && board[src_y + 1][src_x]->getType() == '#') || (!black && src_y == 6 && src_y - 2 == dst_y && board[src_y - 1][src_x]->getType() == '#')) && dst_x == src_x && board[dst_y][dst_x]->getType() == '#')
         {
-            this->En = true;
             return pawnPush;
         }
         if ((black && (src_x + 1 == dst_x || src_x - 1 == dst_x) && src_y + 1 == dst_y && isupper(board[dst_y][dst_x]->getType())) || (!black && (src_x - 1 == dst_x || src_x + 1 == dst_x) && src_y - 1 == dst_y && islower(board[dst_y][dst_x]->getType())))
@@ -43,7 +42,6 @@ int Pawn::movment(Piece* board[][8], int src_x, int src_y, int dst_x, int dst_y)
         }
         if (((black && src_y == 6 && src_y - 2 == dst_y && board[src_y - 1][src_x]->getType() == '#') || (!black && src_y == 1 && src_y + 2 == dst_y && board[src_y + 1][src_x]->getType() == '#')) && dst_x == src_x && board[dst_y][dst_x]->getType() == '#')
         {
-            this->En = true;
             return pawnPush;
         }
         if ((black && (src_x + 1 == dst_x || src_x - 1 == dst_x) && src_y - 1 == dst_y && isupper(board[dst_y][dst_x]->getType())) || (!black && (src_x - 1 == dst_x || src_x + 1 == dst_x) && src_y + 1 == dst_y && islower(board[dst_y][dst_x]->getType())))

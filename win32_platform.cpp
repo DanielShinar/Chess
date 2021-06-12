@@ -9,6 +9,7 @@
 #include "Pawn.h"
 
 #include "GameMaster.h"
+#include "GameRunner.h"
 
 #include <gdiplus.h>
 
@@ -19,7 +20,8 @@ POINT pt;
 Squere squere;
 Squere preSquere;
 
-GameMaster gm;
+
+GameRunner gr;
 
 //#include "renderer.cpp"
 
@@ -34,7 +36,7 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		case WM_CLOSE:
 		case WM_DESTROY:
 		{
-			gm.setRunning(false);
+			gr.setRunning(false);
 		} break;
 		case WM_ERASEBKGND:
 		{
@@ -42,32 +44,31 @@ LRESULT CALLBACK windowCallBack(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		case WM_SIZE:
 		{
-			gm.re_size(hwnd);
+			gr.re_size(hwnd);
 		}
 		case WM_LBUTTONDOWN:
 		{
 			int move = illegal;
-			if (gm.getCheck())
+			if (gr.getCheck())
 			{
 				pt.x = GET_X_LPARAM(lParam);
 				pt.y = GET_Y_LPARAM(lParam);
-				squere.x = pt.x / (gm.getRenderState().Width / 8);
-				squere.y = pt.y / (gm.getRenderState().Height / 8);
-				if (gm.first_check(squere))//checks if the player picks a piece to play
+				squere.x = pt.x / (gr.getRenderState().Width / 8);
+				squere.y = pt.y / (gr.getRenderState().Height / 8);
+				if (gr.first_check(squere))//checks if the player picks a piece to play
 				{
-					gm.updatePiecesMoves();
-					if (gm.getNewTurn())
+					if (gr.getNewTurn())
 					{
-						gm.drew_piece_move(squere);
+						gr.drew_piece_move(squere);
 
 						preSquere.x = squere.x;
 						preSquere.y = squere.y;
-						gm.setNewTurn(false);
+						gr.setNewTurn(false);
 					}
 					else
 					{
-						move = gm.get_player_move(squere, preSquere);
-						gm.play_turn(move, preSquere, squere);
+						move = gr.get_player_move(squere, preSquere);
+						gr.play_turn(move, preSquere, squere);
 					}
 				}
 			}
@@ -95,5 +96,5 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	//create window
 	HWND window = CreateWindow(windowClass.lpszClassName, "Chess", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 880, 880, 0, 0, hInstance, 0);
-	gm.run_game(window);
+	gr.run_game(window);
 }

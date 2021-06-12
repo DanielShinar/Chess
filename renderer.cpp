@@ -99,10 +99,10 @@ internal void draw_rect(float x, float y, float half_size_x, float half_size_y, 
 	x += renderState.Width / 2.f;
 	y += renderState.Height / 2.f;
 	//change to pixels
-	int x0 = x - half_size_x;
-	int x1 = x + half_size_x;
-	int y0 = y - half_size_y;
-	int y1 = y + half_size_y;
+	int x0 = (int)x - half_size_x;
+	int x1 = (int)x + half_size_x;
+	int y0 = (int)y - half_size_y;
+	int y1 = (int)y + half_size_y;
 
 	draw_rect_in_pixels(x0, y0, x1, y1, color, renderState);
 }

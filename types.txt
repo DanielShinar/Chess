@@ -1,0 +1,6 @@
+white king who moved = '1'
+black king who moved = '2'
+white rook who moved = '3'
+black rook who moved = '4'
+white pawn who can be en passante = '5'
+black pawn who can be en passante = '6'
